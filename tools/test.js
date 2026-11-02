@@ -4,7 +4,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function bot(pg,ox,oy,maxMs){ // continuous drag: mouse held down the whole level
  await pg.mouse.move(ox,oy);await pg.mouse.down();const t0=Date.now();
  while(Date.now()-t0<maxMs){const s=await pg.evaluate(()=>{const m=__mh;if(m.state!=='play')return null;const h=m.hole;let best=null,bd=1e9;
-   for(let i=0;i<m.NE;i++){const e=m.E[i];if(!e.alive||e.fall||e.s>=h.r*.95)continue;const d=Math.hypot(e.x-h.x,e.y-h.y);if(d<bd){bd=d;best=e;}}
+   for(let i=0;i<m.NE;i++){const e=m.E[i];if(!e.alive||e.fall||e.s>=h.r*.95)continue;const d=Math.hypot(e.x-h.x,e.y-h.y)-(e.s>=m.L.maxS-1?5000:0);if(d<bd){bd=d;best=e;}}
    return best?{dx:best.x-h.x,dy:best.y-h.y}:{dx:0,dy:0};});
   if(!s)break;const d=Math.hypot(s.dx,s.dy)||1,m=Math.min(80,20+d);await pg.mouse.move(ox+s.dx/d*m,oy+s.dy/d*m,{steps:2});await sleep(60);}
  await pg.mouse.up();}
@@ -29,7 +29,7 @@ async function stats(pg){return pg.evaluate(()=>{const P=__mh.PERF,n=Math.min(P.
   await bp;
   if(lv==4)await pg.tracing.stop();
   const heap1=(await client.send('Runtime.getHeapUsage')).usedSize;
-  const st=await stats(pg);const info=await pg.evaluate(()=>({state:__mh.state,t:__mh.L.t,r:__mh.hole.r,tg:__mh.L.tg,stars:__mh.L.stars,coins:__mh.P.coins,gain:__mh.L.gain,NE:__mh.NE}));
+  const st=await stats(pg);const info=await pg.evaluate(()=>({state:__mh.state,t:__mh.L.t,r:__mh.hole.r,tg:__mh.L.tg,stars:__mh.L.stars,coins:__mh.P.coins,maxS:__mh.L.maxS,bigEaten:__mh.E.slice(0,__mh.NE).filter(e=>e.s>=__mh.L.maxS-1&&!e.alive).length,bigTotal:__mh.E.slice(0,__mh.NE).filter(e=>e.s>=__mh.L.maxS-1).length,eaten:__mh.E.slice(0,__mh.NE).filter(e=>!e.alive).length,gain:__mh.L.gain,NE:__mh.NE}));
   res['level'+(lv+1)]={...info,...st,heapDeltaKB:Math.round((heap1-heap0)/1024)};console.log(lv+1,JSON.stringify(res['level'+(lv+1)]));
   await sleep(400);await pg.screenshot({path:OUT+`0${6+lv}-level${lv+1}-complete.png`.replace('010','10')});
   if(lv<4)await pg.mouse.click(430,515);else await pg.mouse.click(512,515);await sleep(400);
