@@ -37,13 +37,15 @@ function resize(){vw=window.innerWidth;vh=window.innerHeight;dpr=Math.min(window
  const u=Math.min(vw/1024,vh/768);U=u*dpr;uox=Math.round((vw-1024*u)/2*dpr);uoy=Math.round((vh-768*u)/2*dpr);
  hs=Math.max(1,Math.min(1.35,Math.min(vw,vh)/768));
  if(K!==bakedK){bake();bakedK=K;}
- bakeHud();hudDirty=1;dirty=1;}
+ bakeHud();if(bakedK)bakePickerRims();hudDirty=1;dirty=1;}
 // ---------- sprites, prerendered once ----------
 const PCOL=['#ff6b6b','#4a90e2','#ffc531','#2fae8e','#b583f0'],CCOL=['#e9584e','#3d8be0','#9a62d8','#2fae8e','#ff7cb8'];
 const HOUSES=[[130,120,'#2fae8e','#43cba8'],[150,130,'#3d8be0','#5aa7ff'],[150,140,'#e9584e','#ff7a6b'],[160,150,'#e95c9c','#ff7cb8'],[170,130,'#9a62d8','#b583f0'],[160,180,'#3d8be0','#5aa7ff'],[170,170,'#e9584e','#ff7a6b'],[190,200,'#f39a2d','#ffb54f']];
 
 // ---------- everyday items (UK flavour), prerendered once ----------
 // [w,h,size,coins,tier(0 small,1 medium,2 big,3 moving),draw]
+function lb(x,a,b,f){R(x,a-7,b-3,6,6,f?'#203a8a':'#5ab0ff',2,1.5);R(x,a+1,b-3,6,6,f?'#5ab0ff':'#203a8a',2,1.5);}
+function batt(x,a,b,w,c1,c2){for(let i=0;i*8<w;i++){R(x,a+i*8,b,8,5,i%2?c2:c1,0,0);R(x,a+i*8,b+5,8,5,i%2?c1:c2,0,0);}}
 const ITEMS=[
  [18,18,7,1,0,x=>{C(x,0,0,8,'#fff',2.5);C(x,0,0,3,O,0);C(x,-5,-3,1.6,O,0);C(x,5,-2,1.6,O,0);C(x,0,5,1.6,O,0);}], // football
  [22,24,9,1,0,x=>{C(x,-7,-9,4,'#b07a4a',2);C(x,7,-9,4,'#b07a4a',2);C(x,0,4,8,'#b07a4a',2.5);C(x,0,-5,7,'#c98d58',2.5);C(x,0,-4,2,O,0);}], // teddy
@@ -69,8 +71,36 @@ const ITEMS=[
  [170,160,84,5,2,x=>{bld(x,-85,-80,170,160,52,'#2fae8e','#43cba8');for(let i=0;i<8;i++)R(x,-85+i*21.25,22,21.25,14,i%2?'#fff':'#e23b3b',0,0);x.lineWidth=3;x.strokeStyle=O;x.strokeRect(-85,22,170,14);R(x,-50,-74,100,26,'#ffd23f',6,3);coin(x,-30,-61,8);R(x,-15,-64,50,6,O,2,0);}], // corner shop
  [74,36,40,3,3,x=>{R(x,-34,-15,68,30,'#ffd1e8',8,3);R(x,-34,-15,68,8,'#ff7cb8',4,0);R(x,-10,-10,24,20,'#bfe8ff',3,2);R(x,20,-11,10,20,'#bfe8ff',3,2);x.beginPath();x.moveTo(-26,-2);x.lineTo(-20,10);x.lineTo(-14,-2);x.closePath();x.fillStyle='#e8b26a';x.fill();x.stroke();C(x,-20,-5,6,'#fff',2);}], // ice-cream van
  [54,30,34,3,3,x=>{R(x,-25,-13,50,26,'#222',8,3);R(x,-10,-10,18,20,'#bfe8ff',4,2);R(x,-4,-5,8,10,'#ffd23f',2,2);}], // black cab
- [104,40,56,5,3,x=>{R(x,-50,-17,100,34,'#e23b3b',8,3);R(x,-40,-6,70,4,'#cfc8dc',1,1.5);R(x,-40,2,70,4,'#cfc8dc',1,1.5);for(let i=-36;i<30;i+=10)R(x,i,-6,2,12,'#cfc8dc',0,0);R(x,32,-12,14,24,'#bfe8ff',3,2);C(x,40,-14,3,'#4a90e2',1.5);}], // fire engine
+ [104,40,56,5,6,(x,f)=>{R(x,-50,-17,100,34,'#e23b3b',8,3);R(x,-40,-6,70,4,'#cfc8dc',1,1.5);R(x,-40,2,70,4,'#cfc8dc',1,1.5);for(let i=-36;i<30;i+=10)R(x,i,-6,2,12,'#cfc8dc',0,0);R(x,32,-12,14,24,'#bfe8ff',3,2);C(x,36,-14,3.5,f?'#203a8a':'#5ab0ff',1.5);C(x,44,-14,3.5,f?'#5ab0ff':'#203a8a',1.5);}], // fire engine
+ // emergency vehicles (tier 6): drive on the roads, blue lights flash by swapping two prerendered frames
+ [70,36,40,3,6,(x,f)=>{R(x,-33,-15,66,30,'#ffe14a',6,3);batt(x,-31,-5,48,'#2fae4a','#ffe14a');R(x,18,-11,12,22,'#bfe8ff',3,2);R(x,-30,-13,10,4,'#fff',1,0);lb(x,-2,-10,f);}], // ambulance
+ [56,30,36,3,6,(x,f)=>{R(x,-26,-13,52,26,'#fff',7,3);batt(x,-24,-5,32,'#1f6fd1','#ffd23f');R(x,8,-10,14,20,'#bfe8ff',4,2);lb(x,-4,-9,f);}], // police car
+ [72,36,40,3,6,(x,f)=>{R(x,-34,-15,68,30,'#fff',6,3);batt(x,-32,-5,48,'#1f6fd1','#ffd23f');R(x,20,-11,11,22,'#bfe8ff',3,2);lb(x,0,-10,f);}], // police van
+ [60,34,38,3,6,(x,f)=>{R(x,-28,-14,56,28,'#ff8a2a',6,3);R(x,-26,-3,40,6,'#fff',0,0);R(x,10,-11,13,22,'#bfe8ff',3,2);R(x,-31,-8,4,16,O,2,0);lb(x,-6,-10,f);}], // mountain rescue 4x4
+ // animals (tier 4): wander slowly, cheer when swallowed
+ [26,22,10,1,4,x=>{R(x,-9,-2,18,11,'#f39a2d',6,2.5);x.beginPath();x.moveTo(8,4);x.quadraticCurveTo(15,2,13,-6);x.lineWidth=4;x.strokeStyle=O;x.stroke();x.lineWidth=2;x.strokeStyle='#f39a2d';x.stroke();x.beginPath();x.moveTo(-14,-6);x.lineTo(-12,-14);x.lineTo(-8,-8);x.moveTo(-4,-8);x.lineTo(-2,-14);x.lineTo(0,-6);x.fillStyle='#f39a2d';x.fill();x.lineWidth=2;x.strokeStyle=O;x.stroke();C(x,-7,-5,6.5,'#f39a2d',2.5);C(x,-9,-6,1.1,O,0);C(x,-5,-6,1.1,O,0);}], // cat
+ [30,24,13,2,4,x=>{R(x,-11,-3,22,12,'#c98d58',6,2.5);R(x,9,-4,6,3,'#c98d58',1.5,2);C(x,-9,-6,7.5,'#c98d58',2.5);R(x,-17,-9,5,10,'#8a5a32',2.5,2);R(x,-6,-9,5,10,'#8a5a32',2.5,2);C(x,-11,-6,1.2,O,0);C(x,-7,-6,1.2,O,0);C(x,-9,-2,1.8,O,0);}], // dog
+ [22,28,9,1,4,x=>{R(x,-5,-16,4,12,'#fff',2,2);R(x,1,-16,4,12,'#fff',2,2);R(x,-4,-14,2,8,'#ffb3c9',1,0);R(x,2,-14,2,8,'#ffb3c9',1,0);C(x,0,5,8,'#fff',2.5);C(x,0,-3,6.5,'#fff',2.5);C(x,-2,-4,1.1,O,0);C(x,2,-4,1.1,O,0);C(x,0,-1,1.2,'#ff8fb0',0);C(x,8,7,2.5,'#fff',2);}], // rabbit
+ [22,16,7,1,4,x=>{R(x,-10,-6,20,13,'#f2d7b0',6,2.5);R(x,-1,-6,9,13,'#a5683a',0,0);x.lineWidth=2.5;x.strokeStyle=O;x.beginPath();x.roundRect(-10,-6,20,13,6);x.stroke();C(x,-8,-7,2.5,'#a5683a',1.5);C(x,-6,-1,1.1,O,0);}], // guinea pig
+ [34,24,14,2,4,x=>{R(x,-14,-6,26,15,'#a5734a',8,2.5);R(x,-17,-11,13,11,'#a5734a',5,2.5);C(x,-7,-11,2,'#8a5a32',1.5);C(x,-13,-7,1.2,O,0);R(x,-17,-6,4,3,'#6b4428',1,0);C(x,-10,-17,3,'#ffd23f',1.5);}], // capybara (with a little orange-ish friend on its head)
+ [24,26,7,1,4,x=>{x.beginPath();x.arc(6,-3,8,-.6,3.6);x.lineWidth=7;x.strokeStyle=O;x.stroke();x.lineWidth=4.5;x.strokeStyle='#d0632a';x.stroke();C(x,-2,4,6,'#d0632a',2.5);C(x,-6,-3,4.5,'#d0632a',2.5);C(x,-7,-4,1,O,0);C(x,-2,6,2.5,'#f2d7b0',0);}], // squirrel
 ];
+
+// ---------- spinning rims: prerendered rings, rotated anticlockwise with a transform ----------
+function rimRing(x,R,sk){const ro=R*1.2,mid=R*1.1,lw=Math.max(2.5,R*.05);
+ x.beginPath();x.arc(0,0,ro,0,TAU);x.arc(0,0,R,0,TAU,true);x.fillStyle=sk[1];x.fill();
+ x.lineCap='butt';x.lineWidth=R*.12;x.strokeStyle=sk[0];const n=14,seg=TAU/n;
+ for(let i=0;i<n;i++){x.beginPath();x.arc(0,0,mid,i*seg,i*seg+seg*.55);x.stroke();}
+ C(x,ro*Math.cos(0)*.0+mid,0,R*.07,sk[1]==='#fff'||sk[1]==='#ffffff'?'#ffd23f':'#fff',0); // one bright marker dot
+ x.lineWidth=lw;x.strokeStyle=O;x.beginPath();x.arc(0,0,ro,0,TAU);x.stroke();x.beginPath();x.arc(0,0,R,0,TAU);x.stroke();}
+const RIM_R=[45,90,190];let RIMS=[],PRIMS=[];
+function mkRim(sk,R,sc){const sp=mk(R*2.5,R*2.5,x=>rimRing(x,R,sk),sc);sp.R=R;return sp;}
+function bakeRims(){RIMS=RIM_R.map(R=>mkRim(SKINS[P.skin],R,K));}
+function bakePickerRims(){PRIMS=SKINS.map(sk=>mkRim(sk,50,U));}
+function holeInner(x,a,b,r,tilt,sk){x.save();x.translate(a,b);x.scale(1,tilt);C(x,0,0,r,sk[0],0);x.beginPath();x.arc(0,0,r,Math.PI,TAU);x.fillStyle=sk[3];x.fill();x.restore();}
+// draw rim sprite at device position (dx,dy), radius r (world units * f), angle an (negative = anticlockwise on screen)
+function drawRim(sp,dx,dy,f,tilt,an){const c=Math.cos(an)*f,s2=Math.sin(an)*f;g.setTransform(c,s2*tilt,-s2,c*tilt,dx,dy);g.drawImage(sp.c,-sp.ox,-sp.oy);}
+const SPIN=1.3;
 const SP={};
 function mk(w,h,fn,sc){sc=sc||K;const pad=5,c=document.createElement('canvas');c.width=Math.ceil((w+pad*2)*sc);c.height=Math.ceil((h+pad*2)*sc);
  const x=c.getContext('2d');x.setTransform(sc,0,0,sc,c.width/2,c.height/2);x.lineJoin='round';x.lineCap='round';fn(x);return {c:c,ox:Math.round(c.width/2),oy:Math.round(c.height/2)};}
@@ -84,7 +114,9 @@ function bake(){
  SP.bus=mk(124,40,x=>bus(x));
  SP.house=HOUSES.map(h=>mk(h[0],h[1],x=>bld(x,-h[0]/2,-h[1]/2,h[0],h[1],Math.round(h[1]*.28),h[2],h[3])));
  SP.yip=['#ffd23f','#ff7cb8','#8fe3ff'].map(f=>mk(300,80,x=>T(x,'YIPPEE!',0,0,64,f)));
- SP.item=ITEMS.map(it=>mk(it[0],it[1],it[5]));
+ SP.item=ITEMS.map(it=>mk(it[0],it[1],x=>it[5](x,0)));SP.itemB=ITEMS.map(it=>it[4]==6?mk(it[0],it[1],x=>it[5](x,1)):null);
+ bakeRims();bakePickerRims();
+ SP.tl=[0,1,2].map(k=>mk(16,44,x=>{R(x,-2,2,4,18,'#4a4e63',2,1.5);R(x,-7,-20,14,26,'#2b2140',4,2.5);C(x,0,-14,3.2,k==0?'#ff4d4d':'#5a3a3a',0);C(x,0,-7,3.2,k==1?'#ffb21e':'#5a4a2a',0);C(x,0,0,3.2,k==2?'#3fdc6a':'#2a4a35',0);}));
  SP.pop=[1,2,3,5].map(n=>mk(110,36,x=>{R(x,-52,-16,104,32,'#fff',16,3);coin(x,-34,0,10);T(x,'+'+n,10,0,24,'#f5b301');}));
  for(let i=0;i<NE;i++)assignSprite(E[i]);}
 let hudC=null,pauseC=null,hudDirty=1;
@@ -98,7 +130,7 @@ function drawHud(){const x=hudC.getContext('2d'),s=hs*dpr;x.setTransform(1,0,0,1
 const MAXE=170,E=[];for(let i=0;i<MAXE;i++)E.push({t:0,v2:0,spr:null,x:0,y:0,s:0,c:0,alive:0,fall:0,fx:0,fy:0,mv:0,a:0,b:0,v:0,ph:0,hb:0});
 let NE=0;const ORDER=new Int16Array(MAXE);
 const COIN=[1,1,1,2,3,5,5],SIZE=[9,10,17,19,34,64,0];
-function assignSprite(e){const t=e.t;if(t==7){e.spr=SP.item[e.v2];return;}e.spr=t==0?SP.person[e.v2]:t==1?SP.bin:t==2?SP.bench:t==3?SP.tree:t==4?(e.mv==1?SP.carH[e.v2]:SP.carV[e.v2]):t==5?SP.bus:SP.house[e.v2];}
+function assignSprite(e){const t=e.t;if(t==8){e.spr=SP.tl[e.v2];return;}if(t==7){e.spr=SP.item[e.v2];return;}e.spr=t==0?SP.person[e.v2]:t==1?SP.bin:t==2?SP.bench:t==3?SP.tree:t==4?(e.mv==1?SP.carH[e.v2]:SP.carV[e.v2]):t==5?SP.bus:SP.house[e.v2];}
 // spatial grid (counting sort into typed arrays; no allocation)
 const GC=128,GX=WW/GC,GY=WH/GC,GN=GX*GY,gCount=new Int16Array(GN+1),gStart=new Int16Array(GN+1),gItems=new Int16Array(MAXE),eCell=new Int16Array(MAXE);
 function gridBuild(){gCount.fill(0);for(let i=0;i<NE;i++){const e=E[i];if(!e.alive||e.fall){eCell[i]=-1;continue;}let cx=(e.x/GC)|0,cy=(e.y/GC)|0;cx=cx<0?0:cx>=GX?GX-1:cx;cy=cy<0?0:cy>=GY?GY-1:cy;const c=cy*GX+cx;eCell[i]=c;gCount[c]++;}
@@ -108,7 +140,7 @@ function gridBuild(){gCount.fill(0);for(let i=0;i<NE;i++){const e=E[i];if(!e.ali
 const YP=[],CP=[];for(let i=0;i<3;i++)YP.push({on:0,t:0,x:0,y:0,s:0});for(let i=0;i<5;i++)CP.push({on:0,t:0,x:0,y:0,s:0});
 function spawn(pool,x,y,s){let best=pool[0];for(let i=0;i<pool.length;i++){if(!pool[i].on){best=pool[i];break;}if(pool[i].t>best.t)best=pool[i];}best.on=1;best.t=0;best.x=x;best.y=y;best.s=s;}
 // ---------- level ----------
-const LV=[{tg:58,n:[24,8,6,12,6,0,3],mc:4,par:60,it:[14,2,0,1]},{tg:80,n:[26,8,8,14,10,1,6],mc:7,par:80,it:[16,3,0,2]},{tg:100,n:[28,8,8,16,12,1,8],mc:8,par:100,it:[18,4,1,2]},{tg:122,n:[30,8,8,16,14,2,10],mc:8,par:120,it:[18,5,1,3]},{tg:150,n:[32,8,8,16,14,2,12],mc:9,par:140,it:[20,5,2,3]}];
+const LV=[{tg:58,n:[24,8,6,12,6,0,3],mc:4,par:60,it:[14,2,0,1,6]},{tg:80,n:[26,8,8,14,10,1,6],mc:7,par:80,it:[16,3,0,2,7]},{tg:100,n:[28,8,8,16,12,1,8],mc:8,par:100,it:[18,4,1,2,8]},{tg:122,n:[30,8,8,16,14,2,10],mc:8,par:120,it:[18,5,1,3,9]},{tg:150,n:[32,8,8,16,14,2,12],mc:9,par:140,it:[20,5,2,3,10]}];
 const HR=[[360,470],[860,970]],VR=[[560,670],[1290,1400]];
 const BLOCKS=[];{const xs=[[0,548],[682,1278],[1412,2048]],ys=[[0,348],[482,848],[982,1280]];for(const a of xs)for(const b of ys)BLOCKS.push([a[0]+16,b[0]+16,a[1]-16,b[1]-16]);}
 const DECO=new Float32Array(120);let ND=0;
@@ -120,6 +152,8 @@ function buildLevel(n){const cfg=LV[n],r=rng(1234+n*777),boxes=[[1340,210,1540,3
  function place(w,h){for(let k2=0;k2<80;k2++){const B=BLOCKS[(r()*BLOCKS.length)|0];if(B[2]-B[0]<w||B[3]-B[1]<h)continue;const x=B[0]+w/2+r()*(B[2]-B[0]-w),y=B[1]+h/2+r()*(B[3]-B[1]-h);
   if(free(x-w/2,y-h/2,x+w/2,y+h/2)){boxes.push([x-w/2,y-h/2,x+w/2,y+h/2]);return [x,y];}}return null;}
  function add(t,x,y,v2,mv){const e=E[NE++];e.t=t;e.x=x;e.y=y;e.v2=v2;e.mv=mv;e.alive=1;e.fall=0;e.c=COIN[t];e.s=SIZE[t];e.hb=0;return e;}
+ // traffic lights on two corners of every junction (cycle green/amber/red)
+ for(const h of HR)for(const v of VR)for(const q of [[v[0]-22,h[0]-30],[v[1]+22,h[1]+26]]){const e=add(8,q[0],q[1],2,0);e.s=11;e.c=1;e.hb=22;e.fx=r()*9;boxes.push([q[0]-10,q[1]-24,q[0]+10,q[1]+24]);}
  // houses: smallest designs for early levels
  const hs2=[];for(let i=0;i<cfg.n[6];i++)hs2.push(Math.min(7,Math.floor(i*(n+4)/cfg.n[6]+ (n>=3?1:0))));
  for(const d of hs2){const h=HOUSES[d],p=place(h[0],h[1]);if(p){const e=add(6,p[0],p[1],d,0);e.s=Math.round(.48*Math.max(h[0],h[1]));e.hb=h[1]/2;}}
@@ -127,13 +161,14 @@ function buildLevel(n){const cfg=LV[n],r=rng(1234+n*777),boxes=[[1340,210,1540,3
  for(let tt=2;tt>=0;tt--){const pool=tier(tt);for(let i=0;i<cfg.it[tt];i++){const id=pool[(i*7+n*3)%pool.length],it=ITEMS[id],p=place(it[0],it[1]);if(p){const e=add(7,p[0],p[1],id,0);e.s=it[2];e.c=it[3];e.hb=it[1]/2;}}}
  const sz=[0,[16,20],[34,12],[36,40]];
  for(let t=3;t>=1;t--)for(let i=0;i<cfg.n[t];i++){const p=place(sz[t][0],sz[t][1]);if(p)add(t,p[0],p[1],0,0);}
+ {const pool=tier(4);for(let i=0;i<cfg.it[4];i++){const id=pool[(i+n)%pool.length],it=ITEMS[id],span=80+r()*60,q=place(span+it[0],it[1]+6);if(!q)continue;const e=add(7,0,q[1],id,2);e.s=it[2];e.c=it[3];e.hb=it[1]/2;e.ph=0;e.a=q[0]-span/2;e.b=q[0]+span/2;e.v=(10+r()*8)/(e.b-e.a);e.fx=r();}}
  // people: half stand in blocks, half walk on pavements
  for(let i=0;i<cfg.n[0];i++){if(i%2){const p=place(20,30);if(p)add(0,p[0],p[1],i%5,0);}else{
   const e=add(0,0,0,i%5,2);const hz=r()<.6;const seg=r()*1500+150;if(hz){const R2=HR[(r()*2)|0];e.y=r()<.5?R2[0]-6:R2[1]+6;e.a=seg;e.b=seg+120+r()*160;e.ph=0;}else{const R2=VR[(r()*2)|0];e.x=r()<.5?R2[0]-6:R2[1]+6;e.a=r()*1000+120;e.b=e.a+120+r()*120;e.ph=1;}
   e.v=(20+r()*14)/(e.b-e.a);e.fx=r();}}
  // moving vehicles on 4 horizontal lanes, evenly spaced so they never touch
  const lanes=[[HR[0][0]+28,-1],[HR[0][0]+82,1],[HR[1][0]+28,-1],[HR[1][0]+82,1]];const veh=[];
- for(let i=0;i<cfg.n[5];i++)veh.push(5);for(let i=0;i<cfg.mc;i++)veh.push(4);{const mv=tier(3);for(let i=0;i<cfg.it[3];i++)veh.splice(i*3+1,0,100+mv[(i+(n>=2?1:0))%(n>=2?3:2)]);}
+ for(let i=0;i<cfg.n[5];i++)veh.push(5);for(let i=0;i<cfg.mc;i++)veh.push(4);{const mv=tier(3);for(let i=0;i<cfg.it[3];i++)veh.splice(i*3+1,0,100+mv[i%mv.length]);const em=tier(6);for(let i=0;i<[1,1,2,2,3][n];i++)veh.splice(i*4+2,0,100+em[(i+n)%em.length]);}
  veh.forEach((t,i)=>{});const per=[[],[],[],[]];veh.forEach((t,i)=>per[i%4].push(t));
  per.forEach((list,li)=>{const Ln=WW+300,sp=(70+li*9)*lanes[li][1];list.forEach((t,j)=>{const e=t>=100?add(7,0,lanes[li][0],t-100,1):add(t,0,lanes[li][0],t==4?(j+li)%5:0,1);if(t>=100){const it=ITEMS[t-100];e.s=it[2];e.c=it[3];}e.a=Ln*j/list.length+r()*40;e.v=sp;});});
  // parked cars on the vertical roads
@@ -170,7 +205,7 @@ function step(dt){if(L.done)return;L.t+=dt;
   if(d>5){const sp=Math.min(1,(d-5)/JR)*(340+hole_.r*1.2);hole_.x+=dx/d*sp*dt;hole_.y+=dy/d*sp*dt;}}
  const hr=hole_.r;hole_.x=Math.max(hr*.5,Math.min(WW-hr*.5,hole_.x));hole_.y=Math.max(hr*.4,Math.min(WH-hr*.4,hole_.y));
  if(hole_.r<hole_.rt)hole_.r=Math.min(hole_.rt,hole_.r+dt*(20+(hole_.rt-hole_.r)*3));
- moveAll();gridBuild();
+ moveAll();const fl=((L.t*3)|0)&1;for(let i=0;i<NE;i++){const e=E[i];if(!e.alive)continue;if(e.t==7&&e.mv==1&&!e.fall){const it=SP.itemB[e.v2];if(it){const sp=fl?it:SP.item[e.v2];if(e.spr!==sp)e.spr=sp;}continue;}if(e.t!==8)continue;const ph=(L.t+e.fx)%9,k2=ph<4?2:ph<5?1:0;if(k2!==e.v2){e.v2=k2;e.spr=SP.tl[k2];}}gridBuild();
  const r=hole_.r,hx=hole_.x,hy=hole_.y;let x0=((hx-r)/GC)|0,x1=((hx+r)/GC)|0,y0=((hy-r)/GC)|0,y1=((hy+r)/GC)|0;
  x0=x0<0?0:x0;y0=y0<0?0:y0;x1=x1>=GX?GX-1:x1;y1=y1>=GY?GY-1:y1;
  for(let cy=y0;cy<=y1;cy++)for(let cx=x0;cx<=x1;cx++){const c=cy*GX+cx;for(let j=gStart[c],je=gStart[c]+gCount[c];j<je;j++){const e=E[gItems[j]];
@@ -181,7 +216,7 @@ function step(dt){if(L.done)return;L.t+=dt;
  if(hole_.r>=L.tg&&!L.winT)L.winT=L.t;if(L.winT&&L.t-L.winT>.9)win();}
 function swallow(e){e.fall=.0001;e.fx=e.x;e.fy=e.y;const rt=hole_.rt;hole_.rt=Math.min(190,Math.sqrt(rt*rt+L.gain*e.s*e.s));
  P.coins+=e.c;L.earned+=e.c;spawn(CP,e.x,e.y-20,[1,2,3,5].indexOf(e.c));
- const now=performance.now();if(e.t==0){spawn(YP,e.x,e.y-50,(Math.random()*3)|0);if(now-sndT>90){sYip();sndT=now;}}else if(now-sndT>70){sGulp(e.s>30);sndT=now;}}
+ const now=performance.now();if(e.t==0||(e.t==7&&ITEMS[e.v2][4]==4)){spawn(YP,e.x,e.y-50,(Math.random()*3)|0);if(now-sndT>90){sYip();sndT=now;}}else if(now-sndT>70){sGulp(e.s>30);sndT=now;}}
 function win(){L.done=1;const cfg=LV[L.n],st=L.t<=cfg.par?3:L.t<=cfg.par*1.7?2:1;L.stars=st;P.stars[L.n]=Math.max(P.stars[L.n],st);P.coins+=st*5;L.earned+=st*5;saveP();clearRun();state='win';dirty=1;joy.on=0;sHappy();}
 // ---------- run save / resume ----------
 let saveT=0;
@@ -205,7 +240,7 @@ function render(){
  camX=viewW>=WW?(WW-viewW)/2:Math.max(0,Math.min(WW-viewW,hole_.x-viewW/2));camY=viewH>=WH?(WH-viewH)/2:Math.max(0,Math.min(WH-viewH,hole_.y-viewH/2));
  const cxd=Math.round(camX*K),cyd=Math.round(camY*K),wx0=cxd/K,wy0=cyd/K,wx1=wx0+viewW,wy1=wy0+viewH;
  g.setTransform(K,0,0,K,-cxd,-cyd);ground(wx0-2,wy0-2,wx1+2,wy1+2);
- g.lineJoin='round';hole(g,hole_.x,hole_.y,hole_.r,TILT,SKINS[P.skin]);
+ g.lineJoin='round';{const r=hole_.r;let sp=RIMS[2];for(let i=0;i<3;i++)if(RIMS[i].R>=r){sp=RIMS[i];break;}drawRim(sp,hole_.x*K-cxd,hole_.y*K-cyd,r/sp.R,TILT,-L.t*SPIN);g.setTransform(K,0,0,K,-cxd,-cyd);holeInner(g,hole_.x,hole_.y,r,TILT,SKINS[P.skin]);}
  // falling things, clipped to the hole
  let anyFall=0;for(let i=0;i<NE;i++)if(E[i].fall){anyFall=1;break;}
  if(anyFall){g.save();g.setTransform(1,0,0,1,0,0);const hx=hole_.x*K-cxd,hy=hole_.y*K-cyd;g.beginPath();g.ellipse(hx,hy,hole_.r*K,hole_.r*TILT*K,0,0,TAU);g.clip();
@@ -245,7 +280,7 @@ function skinCard(n){return [170+(n%4)*228,260+Math.floor(n/4)*260];}
 function renderSkins(){bg('#6b3fd6');const x=g;for(let i=0;i<20;i++)C(x,(i*137)%1024,(i*251)%768,30,'#7a4fe0',0);
  coinPill();R(x,944,18,64,64,'#fff',32,4);x.beginPath();x.moveTo(962,36);x.lineTo(990,64);x.moveTo(990,36);x.lineTo(962,64);x.lineWidth=7;x.strokeStyle=O;x.stroke();
  SKINS.forEach((sk,n)=>{const [a,b]=skinCard(n),own=P.owned[n],sel=P.skin==n,can=P.coins>=sk[2];
-  R(x,a-100,b-100,200,210,sel?'#ffd23f':'#fff',30,5);hole(x,a,b-10,50,.75,sk);
+  R(x,a-100,b-100,200,210,sel?'#ffd23f':'#fff',30,5);drawRim(PRIMS[n],a*U+uox,(b-10)*U+uoy,1,.75,-performance.now()/1000*SPIN);g.setTransform(U,0,0,U,uox,uoy);holeInner(x,a,b-10,50,.75,sk);
   if(sel){C(x,a,b+83,20,'#2fae8e',3);tick(x,a,b+83,26);}
   else if(own){C(x,a,b+83,18,'#e5ddf5',3);}
   else if(can){R(x,a-55,b+66,110,34,'#ffd23f',17,3);coin(x,a-30,b+83,10);T(x,''+sk[2],a+12,b+83,22,'#fff');}
@@ -268,7 +303,7 @@ cv.addEventListener('pointerdown',ev=>{ev.preventDefault();au();const cx=ev.clie
   if(near(p,MP[5][0],MP[5][1],60)&&!P.gift&&nextLevel()===-1){P.gift=1;P.coins+=100;saveP();sHappy();giftShow=1;dirty=1;setTimeout(()=>{giftShow=0;dirty=1;},2200);return;}
   if(p[0]>850&&p[1]>620){state='skins';dirty=1;}return;}
  if(state==='skins'){if(p[0]>920&&p[1]<100){goMap();return;}for(let n=0;n<8;n++){const [a,b]=skinCard(n);if(Math.abs(p[0]-a)<105&&Math.abs(p[1]-b-5)<110){
-   if(P.owned[n]){P.skin=n;sGulp(0);}else if(P.coins>=SKINS[n][2]){P.coins-=SKINS[n][2];P.owned[n]=1;P.skin=n;sHappy();}else tone(220,200,.15,'sine',.12);saveP();hudDirty=1;dirty=1;return;}}return;}
+   if(P.owned[n]){P.skin=n;bakeRims();sGulp(0);}else if(P.coins>=SKINS[n][2]){P.coins-=SKINS[n][2];P.owned[n]=1;P.skin=n;bakeRims();sHappy();}else tone(220,200,.15,'sine',.12);saveP();hudDirty=1;dirty=1;return;}}return;}
  if(state==='pause'){if(near(p,512,330,110)){state='play';hudDirty=1;return;}if(near(p,512,505,70)){saveRun();clearRun();goMap();}return;}
  if(state==='win'){const hx=L.n<4?430:512;if(near(p,hx,515,70)){goMap();return;}if(L.n<4&&near(p,600,515,72))startLevel(L.n+1);}},{passive:false});
 cv.addEventListener('pointermove',ev=>{if(joy.on&&ev.pointerId===joy.id){joy.x=ev.clientX;joy.y=ev.clientY;}});
@@ -286,6 +321,7 @@ function frame(ts){requestAnimationFrame(frame);const c0=performance.now();
  if(state==='play'){let dt=last?(ts-last)/1000:STEP;if(dt>.1)dt=.1;acc+=dt;while(acc>=STEP){step(STEP);acc-=STEP;}if(state==='play')render();else dirty=1;
   saveT+=dt;if(saveT>1.5){saveT=0;saveRun();}
   const c1=performance.now();if(last){PERF.dt[PERF.i]=ts-last;PERF.cpu[PERF.i]=c1-c0;PERF.i=(PERF.i+1)%1200;PERF.n++;}}
+ if(state==='skins')dirty=1;
  if(state!=='play'&&dirty){dirty=0;renderScreen();}
  last=ts;}
 resize();if(!resumeRun())state='map';dirty=1;requestAnimationFrame(frame);
