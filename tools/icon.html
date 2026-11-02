@@ -1,0 +1,7 @@
+<canvas id=c></canvas><script>
+const s=+location.hash.slice(1),c=document.getElementById('c');c.width=c.height=s;const x=c.getContext('2d');x.scale(s/512,s/512);
+x.fillStyle='#8fd16a';x.fillRect(0,0,512,512);x.fillStyle='#5b5f73';x.fillRect(0,330,512,110);
+x.save();x.translate(256,300);x.scale(1,.62);x.beginPath();x.arc(0,0,190,0,7);x.fillStyle='#fff';x.fill();x.lineWidth=12;x.strokeStyle='#2b2140';x.stroke();
+x.beginPath();x.arc(0,0,172,0,7);x.fillStyle='#3a1a6b';x.fill();x.beginPath();x.arc(0,0,172,Math.PI,7);x.fillStyle='#1c0b3a';x.fill();x.restore();
+x.font='900 110px Arial';x.textAlign='center';x.lineWidth=20;x.strokeStyle='#2b2140';x.lineJoin='round';x.strokeText('YIPPEE!',256,130);x.fillStyle='#ffd23f';x.fillText('YIPPEE!',256,130);
+</script>
