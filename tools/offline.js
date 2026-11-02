@@ -4,7 +4,7 @@ pg.on('pageerror',e=>console.log('ERR',e.message));
 await pg.goto(U,{waitUntil:'networkidle0'});await pg.evaluate(()=>navigator.serviceWorker.ready);await pg.reload({waitUntil:'networkidle0'});await sleep(1000);
 console.log('online state',await pg.evaluate(()=>__mh.state),'caches',await pg.evaluate(async()=>(await caches.keys()).join()));
 await pg.setOfflineMode(true);await pg.reload();await sleep(1000);console.log('offline state',await pg.evaluate(()=>__mh.state));
-await pg.mouse.click(590/1024*1180-0,0);const u=Math.min(1180/1024,820/768);await pg.mouse.click(590+(150-512)*u,410+(560-384)*u);await sleep(400);
+const m0=await pg.evaluate(()=>__mh.MP[0]);await pg.mouse.click(590/1024*1180-0,0);const u=Math.min(1180/1024,820/768);await pg.mouse.click(590+(m0[0]-512)*u,410+(m0[1]-384)*u);await sleep(400);
 await pg.mouse.move(800,500);await pg.mouse.down();await pg.mouse.move(870,480,{steps:5});await sleep(3000);await pg.mouse.up();
 console.log('offline play',await pg.evaluate(()=>({s:__mh.state,r:__mh.hole.r.toFixed(1),coins:__mh.P.coins})));
 await pg.screenshot({path:__dirname+'/../proof/live-offline-1180x820.png'});await b.close();})();
