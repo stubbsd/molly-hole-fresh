@@ -77,6 +77,16 @@ const ITEMS=[
  [56,30,36,3,6,(x,f)=>{R(x,-26,-13,52,26,'#fff',7,3);batt(x,-24,-5,32,'#1f6fd1','#ffd23f');R(x,8,-10,14,20,'#bfe8ff',4,2);lb(x,-4,-9,f);}], // police car
  [72,36,40,3,6,(x,f)=>{R(x,-34,-15,68,30,'#fff',6,3);batt(x,-32,-5,48,'#1f6fd1','#ffd23f');R(x,20,-11,11,22,'#bfe8ff',3,2);lb(x,0,-10,f);}], // police van
  [60,34,38,3,6,(x,f)=>{R(x,-28,-14,56,28,'#ff8a2a',6,3);R(x,-26,-3,40,6,'#fff',0,0);R(x,10,-11,13,22,'#bfe8ff',3,2);R(x,-31,-8,4,16,O,2,0);lb(x,-6,-10,f);}], // mountain rescue 4x4
+ // farm vehicles (tier 8): trundle slowly along their own lane, facing right
+ [50,34,30,3,8,x=>{C(x,-13,6,11,'#3a3a3a',3);C(x,-13,6,4,'#cfc8dc',2);C(x,14,9,7,'#3a3a3a',3);R(x,-10,-6,30,12,'#e23b3b',4,3);R(x,-18,-16,16,16,'#e23b3b',3,3);R(x,-15,-13,10,8,'#bfe8ff',2,2);R(x,10,-12,3,8,O,1,0);}], // red tractor
+ [92,36,44,3,8,x=>{R(x,-44,-12,46,22,'#c9a24a',4,3);for(let i=0;i<3;i++)R(x,-41+i*14,-9,12,16,'#ffd56a',3,2);C(x,-30,12,5,'#3a3a3a',2);C(x,-14,12,5,'#3a3a3a',2);R(x,2,-1,6,3,O,1,0);C(x,18,6,11,'#3a3a3a',3);C(x,18,6,4,'#cfc8dc',2);C(x,40,9,6,'#3a3a3a',3);R(x,20,-5,24,11,'#2f9e44',4,3);R(x,12,-16,15,15,'#2f9e44',3,3);R(x,15,-13,9,7,'#bfe8ff',2,2);}], // green tractor + hay trailer
+ [134,58,70,5,8,x=>{R(x,52,-20,12,40,'#e0b020',3,3);for(let i=-16;i<18;i+=8)R(x,53,i,10,3,O,1,0);R(x,-50,-14,100,30,'#2f9e44',8,3);R(x,-40,-26,40,14,'#2f9e44',5,3);R(x,10,-28,30,22,'#bfe8ff',5,3);R(x,-62,-6,16,6,'#2f9e44',3,2.5);C(x,-30,18,10,'#3a3a3a',3);C(x,26,18,12,'#3a3a3a',3);C(x,26,18,4,'#cfc8dc',2);}], // combine harvester
+ [30,22,14,1,8,x=>{C(x,-9,6,5,'#3a3a3a',2.5);C(x,9,6,5,'#3a3a3a',2.5);R(x,-11,-4,22,9,'#ff8a2a',4,2.5);R(x,6,-9,3,7,O,1,0);R(x,2,-10,10,3,O,1,0);C(x,-3,-9,3.5,'#4a90e2',2);}], // quad bike
+ [76,36,38,3,8,x=>{R(x,-36,-12,40,18,'#8a5a32',4,3);R(x,-33,-12,34,7,'#5a3a24',2,0);x.lineWidth=3;x.strokeStyle=O;x.strokeRect(-36,-12,40,18);C(x,-28,12,6,'#3a3a3a',2.5);C(x,-10,12,6,'#3a3a3a',2.5);R(x,4,-2,6,3,O,1,0);C(x,22,6,10,'#3a3a3a',3);R(x,20,-4,16,10,'#1f6fd1',3,3);R(x,14,-15,13,13,'#1f6fd1',3,3);R(x,16,-12,8,7,'#bfe8ff',2,2);}], // muck spreader (blue tractor pulling it)
+ [60,34,34,3,8,x=>{R(x,-28,-8,56,20,'#6b8f3a',6,3);R(x,-26,-6,26,10,'#c9a24a',2,2);R(x,4,-18,20,14,'#6b8f3a',4,3);R(x,8,-15,13,9,'#bfe8ff',2,2);C(x,-16,13,7,'#3a3a3a',3);C(x,16,13,7,'#3a3a3a',3);R(x,26,-2,4,8,'#cfc8dc',1,1.5);}], // farm 4x4 pick-up
+ // farm-edge patch (tier 9): static hay bales and a wooden fence
+ [26,22,12,1,9,x=>{R(x,-11,-9,22,18,'#e8c050',8,3);x.lineWidth=2;x.strokeStyle='#b8902a';x.beginPath();x.arc(-3,0,5,0,TAU);x.stroke();}], // round hay bale
+ [70,26,20,2,9,x=>{for(let i=-30;i<=30;i+=15)R(x,i-3,-11,6,22,'#b07a4a',2,2);R(x,-34,-7,68,4,'#c98d58',1,2);R(x,-34,2,68,4,'#c98d58',1,2);}], // fence
  // animals (tier 4): wander slowly, cheer when swallowed
  [26,22,10,1,4,x=>{R(x,-9,-2,18,11,'#f39a2d',6,2.5);x.beginPath();x.moveTo(8,4);x.quadraticCurveTo(15,2,13,-6);x.lineWidth=4;x.strokeStyle=O;x.stroke();x.lineWidth=2;x.strokeStyle='#f39a2d';x.stroke();x.beginPath();x.moveTo(-14,-6);x.lineTo(-12,-14);x.lineTo(-8,-8);x.moveTo(-4,-8);x.lineTo(-2,-14);x.lineTo(0,-6);x.fillStyle='#f39a2d';x.fill();x.lineWidth=2;x.strokeStyle=O;x.stroke();C(x,-7,-5,6.5,'#f39a2d',2.5);C(x,-9,-6,1.1,O,0);C(x,-5,-6,1.1,O,0);}], // cat
  [30,24,13,2,4,x=>{R(x,-11,-3,22,12,'#c98d58',6,2.5);R(x,9,-4,6,3,'#c98d58',1.5,2);C(x,-9,-6,7.5,'#c98d58',2.5);R(x,-17,-9,5,10,'#8a5a32',2.5,2);R(x,-6,-9,5,10,'#8a5a32',2.5,2);C(x,-11,-6,1.2,O,0);C(x,-7,-6,1.2,O,0);C(x,-9,-2,1.8,O,0);}], // dog
@@ -140,7 +150,7 @@ function gridBuild(){gCount.fill(0);for(let i=0;i<NE;i++){const e=E[i];if(!e.ali
 const YP=[],CP=[];for(let i=0;i<3;i++)YP.push({on:0,t:0,x:0,y:0,s:0});for(let i=0;i<5;i++)CP.push({on:0,t:0,x:0,y:0,s:0});
 function spawn(pool,x,y,s){let best=pool[0];for(let i=0;i<pool.length;i++){if(!pool[i].on){best=pool[i];break;}if(pool[i].t>best.t)best=pool[i];}best.on=1;best.t=0;best.x=x;best.y=y;best.s=s;}
 // ---------- level ----------
-const LV=[{tg:58,n:[24,8,6,12,6,0,3],mc:4,par:60,it:[14,2,0,1,6]},{tg:80,n:[26,8,8,14,10,1,6],mc:7,par:80,it:[16,3,0,2,7]},{tg:100,n:[28,8,8,16,12,1,8],mc:8,par:100,it:[18,4,1,2,8]},{tg:122,n:[30,8,8,16,14,2,10],mc:8,par:120,it:[18,5,1,3,9]},{tg:150,n:[32,8,8,16,14,2,12],mc:9,par:140,it:[20,5,2,3,10]}];
+const LV=[{tg:58,n:[24,8,6,12,6,0,3],mc:4,par:60,it:[14,2,0,1,6]},{tg:80,n:[26,8,8,14,10,1,6],mc:7,par:80,it:[16,3,0,2,7]},{tg:100,n:[28,8,8,16,12,1,8],mc:8,par:100,it:[18,4,1,2,8]},{tg:122,n:[28,8,8,16,14,2,10],mc:8,par:120,it:[18,5,1,3,9]},{tg:150,n:[28,8,8,16,14,2,12],mc:9,par:140,it:[20,5,2,3,10]}];
 const HR=[[360,470],[860,970]],VR=[[560,670],[1290,1400]];
 const BLOCKS=[];{const xs=[[0,548],[682,1278],[1412,2048]],ys=[[0,348],[482,848],[982,1280]];for(const a of xs)for(const b of ys)BLOCKS.push([a[0]+16,b[0]+16,a[1]-16,b[1]-16]);}
 const DECO=new Float32Array(120);let ND=0;
@@ -159,6 +169,7 @@ function buildLevel(n){const cfg=LV[n],r=rng(1234+n*777),boxes=[[1340,210,1540,3
  for(const d of hs2){const h=HOUSES[d],p=place(h[0],h[1]);if(p){const e=add(6,p[0],p[1],d,0);e.s=Math.round(.48*Math.max(h[0],h[1]));e.hb=h[1]/2;}}
  const tier=t=>{const a=[];ITEMS.forEach((it,i)=>{if(it[4]==t)a.push(i);});return a;};
  for(let tt=2;tt>=0;tt--){const pool=tier(tt);for(let i=0;i<cfg.it[tt];i++){const id=pool[(i*7+n*3)%pool.length],it=ITEMS[id],p=place(it[0],it[1]);if(p){const e=add(7,p[0],p[1],id,0);e.s=it[2];e.c=it[3];e.hb=it[1]/2;}}}
+ {const fp=tier(9);for(let i=0;i<4;i++){const id=fp[i%2],it=ITEMS[id],p=place(it[0],it[1]);if(p){const e=add(7,p[0],p[1],id,0);e.s=it[2];e.c=it[3];e.hb=it[1]/2;}}}
  const sz=[0,[16,20],[34,12],[36,40]];
  for(let t=3;t>=1;t--)for(let i=0;i<cfg.n[t];i++){const p=place(sz[t][0],sz[t][1]);if(p)add(t,p[0],p[1],0,0);}
  {const pool=tier(4);for(let i=0;i<cfg.it[4];i++){const id=pool[(i+n)%pool.length],it=ITEMS[id],span=80+r()*60,q=place(span+it[0],it[1]+6);if(!q)continue;const e=add(7,0,q[1],id,2);e.s=it[2];e.c=it[3];e.hb=it[1]/2;e.ph=0;e.a=q[0]-span/2;e.b=q[0]+span/2;e.v=(10+r()*8)/(e.b-e.a);e.fx=r();}}
@@ -169,8 +180,8 @@ function buildLevel(n){const cfg=LV[n],r=rng(1234+n*777),boxes=[[1340,210,1540,3
  // moving vehicles on 4 horizontal lanes, evenly spaced so they never touch
  const lanes=[[HR[0][0]+28,-1],[HR[0][0]+82,1],[HR[1][0]+28,-1],[HR[1][0]+82,1]];const veh=[];
  for(let i=0;i<cfg.n[5];i++)veh.push(5);for(let i=0;i<cfg.mc;i++)veh.push(4);{const mv=tier(3);for(let i=0;i<cfg.it[3];i++)veh.splice(i*3+1,0,100+mv[i%mv.length]);const em=tier(6);for(let i=0;i<[1,1,2,2,3][n];i++)veh.splice(i*4+2,0,100+em[(i+n)%em.length]);}
- veh.forEach((t,i)=>{});const per=[[],[],[],[]];veh.forEach((t,i)=>per[i%4].push(t));
- per.forEach((list,li)=>{const Ln=WW+300,sp=(70+li*9)*lanes[li][1];list.forEach((t,j)=>{const e=t>=100?add(7,0,lanes[li][0],t-100,1):add(t,0,lanes[li][0],t==4?(j+li)%5:0,1);if(t>=100){const it=ITEMS[t-100];e.s=it[2];e.c=it[3];}e.a=Ln*j/list.length+r()*40;e.v=sp;});});
+ const per=[[],[],[],[]];{const fm=tier(8),nf=[2,2,3,3,4][n];veh.forEach((t,i)=>per[nf?i%3:i%4].push(t));for(let i=0;i<nf;i++)per[3].push(100+fm[(i+n*2)%fm.length]);}
+ per.forEach((list,li)=>{const Ln=WW+300,sp=(li==3?40:70+li*9)*lanes[li][1];list.forEach((t,j)=>{const e=t>=100?add(7,0,lanes[li][0],t-100,1):add(t,0,lanes[li][0],t==4?(j+li)%5:0,1);if(t>=100){const it=ITEMS[t-100];e.s=it[2];e.c=it[3];}e.a=Ln*j/list.length+r()*40;e.v=sp;});});
  // parked cars on the vertical roads
  for(let i=0;i<cfg.n[4]-cfg.mc;i++){const R2=VR[i%2],x=R2[0]+(i%4<2?28:82);let y;for(let q=0;q<30;q++){y=60+r()*1160;if(!(y>HR[0][0]-40&&y<HR[0][1]+40)&&!(y>HR[1][0]-40&&y<HR[1][1]+40)&&free(x-15,y-26,x+15,y+26))break;}boxes.push([x-15,y-26,x+15,y+26]);add(4,x,y,i%5,0);}
  ND=0;for(let i=0;i<40;i++){const p=place(30,30);if(p){DECO[ND*3]=p[0];DECO[ND*3+1]=p[1];DECO[ND*3+2]=10+r()*14;ND++;boxes.pop();}}
